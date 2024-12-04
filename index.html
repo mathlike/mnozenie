@@ -155,7 +155,8 @@
 
         if (!isNaN(userAnswer)) {
           if (userAnswer === q.answer) {
-            score += points;
+            added = points;
+            score += added;
             currentQuestion++;
             inputElement.value = "";
             if (currentQuestion < totalQuestions) {
