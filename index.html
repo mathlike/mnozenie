@@ -91,7 +91,7 @@
   <div class="fixed-footer">
         <div>
           <span style="font-size:14px;">
-            <em>&copy; 2014 Copyright by Sylwester v1.17</em>
+            <em>&copy; 2014 Copyright by Sylwester (v1.17)</em>
           </span>
         </div>        
   </div>
@@ -131,18 +131,21 @@
           }
 
     // Rozpoczęcie gry
-          function startGame() {
-            generateQuestions();
-            currentQuestion = 0;
-            score = 0;
-        added = 0; // Resetowanie wartości dodanych punktów
-        startButton.disabled = true;
-        inputElement.disabled = false;
-        inputElement.value = "";
-        inputElement.focus();
-        updateStats();
-        showQuestion();
-      }
+      function startGame() {
+    const playerName = getPlayerName(); // Sprawdza i pobiera imię gracza
+    console.log(`Gracz: ${playerName}`); // Opcjonalnie wyświetl w konsoli
+
+    generateQuestions();
+    currentQuestion = 0;
+    score = 0;
+    added = 0; // Resetowanie wartości dodanych punktów
+    startButton.disabled = true;
+    inputElement.disabled = false;
+    inputElement.value = "";
+    inputElement.focus();
+    updateStats();
+    showQuestion();
+}
 
     // Wyświetlenie pytania
       function showQuestion() {
@@ -204,12 +207,15 @@
         }
 
     // Koniec gry
-        function endGame() {
-          questionElement.textContent = "Gra zakończona! Twoje punkty:";
-          scoreElement.textContent = `Zdobyłeś ${score} punktów na ${totalQuestions * onepoints} możliwych.`;
-          startButton.disabled = false;
-          inputElement.disabled = true;
-        }
+       function endGame() {
+    questionElement.textContent = "Gra zakończona! Twoje punkty:";
+    scoreElement.textContent = `Zdobyłeś ${score} punktów na ${totalQuestions * onepoints} możliwych.`;
+    startButton.disabled = false;
+    inputElement.disabled = true;
+
+    saveRecord(score); // Zapisuje wynik (imię jest pobierane w saveRecord)
+}
+
 
     // Obsługa wydarzeń
         startButton.addEventListener("click", startGame);
@@ -218,6 +224,42 @@
             checkAnswer();
           }
         });
+
+    function getPlayerName() {
+    let playerName = localStorage.getItem("playerName");
+    while (!playerName || playerName.length < 3) {
+        playerName = prompt("Wpisz swoje imię (minimum 3 znaki):");
+        if (playerName && playerName.length >= 3) {
+            localStorage.setItem("playerName", playerName);
+        } else {
+            alert("Imię musi mieć co najmniej 3 znaki!");
+        }
+    }
+    return playerName;
+}
+
+
+function saveRecord(score) {
+    const url = "https://script.google.com/macros/s/AKfycbzCga2f6sHbwMYNAsVFOGSddqSdFsO_ua6WI5S10jWW2D7DB3aZUEAVTOyxUicwqTB-3w/exec";
+    const playerName = localStorage.getItem("playerName") || "Anonim";
+
+    const data = { name: playerName, score: score };
+
+    fetch(url, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+            "Content-Type": "application/json"
+        },
+        mode: "no-cors" // Dodanie trybu no-cors
+    })
+    .then(response => console.log("Wysłano dane"))
+    .catch(error => console.error("Błąd:", error));
+}
+
+
+
+
       </script>
 
     </body>
