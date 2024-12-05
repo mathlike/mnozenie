@@ -139,7 +139,7 @@
     currentQuestion = 0;
     score = 0;
     added = 0; // Resetowanie wartości dodanych punktów
-    startButton.disabled = true;
+    startButton.style.display = "none";
     inputElement.disabled = false;
     inputElement.value = "";
     inputElement.click();
@@ -211,7 +211,7 @@
        function endGame() {
     questionElement.textContent = "Gra zakończona! Twoje punkty:";
     scoreElement.textContent = `Zdobyłeś ${score} punktów na ${totalQuestions * onepoints} możliwych.`;
-    startButton.disabled = false;
+    startButton.style.display = "";
     inputElement.disabled = true;
 
     saveRecord(score); // Zapisuje wynik (imię jest pobierane w saveRecord)
