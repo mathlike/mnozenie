@@ -163,7 +163,7 @@
         const userAnswer = parseInt(inputElement.value, 10);
         const q = questions[currentQuestion];
         const timeTaken = Date.now() - startTime; // Czas w milisekundach
-        let points = Math.max(0, Math.round(onepoints + 15 - parseInt(timeTaken * 0.02)));  // Formuła punktacji
+        let points = Math.max(0, Math.round(onepoints + 15 - parseInt(timeTaken * 0.01)));  // Formuła punktacji
 
         if (!isNaN(userAnswer)) {
           if (userAnswer === q.answer) {
