@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -91,7 +90,7 @@
   <div class="fixed-footer">
         <div>
           <span style="font-size:14px;">
-            <em>&copy; 2014 Copyright by Sylwester (v1.19)</em>
+            <em>&copy; 2014 Copyright by Sylwester (v1.17)</em>
           </span>
         </div>        
   </div>
@@ -163,7 +162,7 @@
         const userAnswer = parseInt(inputElement.value, 10);
         const q = questions[currentQuestion];
         const timeTaken = Date.now() - startTime; // Czas w milisekundach
-        let points = Math.max(0, Math.round(onepoints + 8 - parseInt(timeTaken * 0.01)));  // Formuła punktacji
+        let points = Math.max(0, Math.round(onepoints + 10 - parseInt(timeTaken * 0.015)));  // Formuła punktacji
 
         if (!isNaN(userAnswer)) {
           if (userAnswer === q.answer) {
