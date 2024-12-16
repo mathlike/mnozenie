@@ -90,176 +90,191 @@
   <div class="fixed-footer">
         <div>
           <span style="font-size:14px;">
-            <em>&copy; 2014 Copyright by Sylwester (v1.17)</em>
+            <em>&copy; 2014 Copyright by Sylwester (v1.18)</em>
           </span>
         </div>        
   </div>
 
   <script>
-    let totalQuestions = 20; // Zmienna określająca liczbę pytań
-    let questions = [];
-    let askedQuestions = {}; // Obiekt do śledzenia unikalnych pytań
-    let currentQuestion = 0;
-    let score = 0;
-    let startTime = 0;
-    let added = 0;
-    let onepoints = 100;
 
-    const questionElement = document.getElementById("question");
-    const inputElement = document.getElementById("input");
-    const startButton = document.getElementById("startButton");
-    const scoreElement = document.getElementById("score");
-    const addedElement = document.getElementById("added");
-    const currentScoreElement = document.getElementById("currentScore");
+let totalQuestions = 20; // Zmienna określająca liczbę pytań
+let questions = [];
+let askedQuestions = {}; // Obiekt do śledzenia unikalnych pytań
+let currentQuestion = 0;
+let score = 0;
+let startTime = 0;
+let added = 0;
+let onepoints = 100;
 
-    // Generowanie losowych pytań bez powtórzeń
-    function generateQuestions() {
-      questions = [];
-        askedQuestions = {}; // Resetowanie obiektu śledzenia pytań
-        while (questions.length < totalQuestions) {
-            const a = Math.floor(Math.random() * 8) + 2; // Losuje liczbę od 2 do 9
-            const b = Math.floor(Math.random() * 8) + 2;
+const questionElement = document.getElementById("question");
+const inputElement = document.getElementById("input");
+const startButton = document.getElementById("startButton");
+const scoreElement = document.getElementById("score");
+const addedElement = document.getElementById("added");
+const currentScoreElement = document.getElementById("currentScore");
 
-            const key = a < b ? `${a}-${b}` : `${b}-${a}`; // Klucz w formacie mniejsza-większa
+// Generowanie losowych pytań bez powtórzeń
+function generateQuestions() {
+  questions = [];
+  askedQuestions = {}; // Resetowanie obiektu śledzenia pytań
+  while (questions.length < totalQuestions) {
+    const a = Math.floor(Math.random() * 8) + 2; // Losuje liczbę od 2 do 9
+    const b = Math.floor(Math.random() * 8) + 2;
 
-            if (!askedQuestions[key]) { // Jeśli pytanie nie było jeszcze zadane
-                askedQuestions[key] = true; // Zapisanie jako użyte
-                questions.push({ a, b, answer: a * b });
-              }
-            }
-          }
+    const key = a < b ? `${a}-${b}` : `${b}-${a}`; // Klucz w formacie mniejsza-większa
 
-    // Rozpoczęcie gry
-      function startGame() {
-    const playerName = getPlayerName(); // Sprawdza i pobiera imię gracza
-    console.log(`Gracz: ${playerName}`); // Opcjonalnie wyświetl w konsoli
-
-    generateQuestions();
-    currentQuestion = 0;
-    score = 0;
-    added = 0; // Resetowanie wartości dodanych punktów
-    startButton.style.display = "none";
-    inputElement.disabled = false;
-    inputElement.value = "";
-    inputElement.click();
-    inputElement.focus();
-    updateStats();
-    showQuestion();
-}
-
-    // Wyświetlenie pytania
-      function showQuestion() {
-        const q = questions[currentQuestion];
-        if (q) {
-          questionElement.innerHTML = `Ile to <b>${q.a}</b> x <b>${q.b}</b>?`;
-          startTime = Date.now();
-          updateStats();
-        }
-      }
-
-    // Sprawdzenie odpowiedzi
-      function checkAnswer() {
-        const userAnswer = parseInt(inputElement.value, 10);
-        const q = questions[currentQuestion];
-        const timeTaken = Date.now() - startTime; // Czas w milisekundach
-        let points = Math.max(0, Math.round(onepoints + 10 - parseInt(timeTaken * 0.015)));  // Formuła punktacji
-
-        if (!isNaN(userAnswer)) {
-          if (userAnswer === q.answer) {
-            added = points;
-            score += added;
-            currentQuestion++;
-            inputElement.value = "";
-            if (currentQuestion < totalQuestions) {
-              showQuestion();
-            } else {
-              endGame();
-            }
-          } else {
-                flashError(); // Błędna odpowiedź – efekt czerwonego tła
-                added = points - onepoints; // Kara - im dłużej tym gorzej
-                score = Math.max(0, score + added); // Upewnij się, że wynik nie jest ujemny
-                inputElement.value = ""; // Czyszczenie inputu po błędzie
-              }
-            updateStats(); // Aktualizacja statystyk niezależnie od poprawności odpowiedzi
-          }
-        }
-
-    // Efekt błędnej odpowiedzi (czerwone tło)
-        function flashError() {
-          document.body.classList.add("error");
-          setTimeout(() => {
-            document.body.classList.remove("error");
-          }, 250);
-        }
-
-    // Aktualizacja statystyk
-        function updateStats() {
-          if (currentQuestion < totalQuestions) {
-            // Wyświetlanie numeru pytania
-            scoreElement.textContent = `Nr ${currentQuestion + 1}/${totalQuestions}`;
-          } 
-
-        // Aktualizacja punktów w tabelce
-          currentScoreElement.textContent = score;
-          addedElement.textContent = added;
-          added >= 0 ? addedElement.style.color = "green" : addedElement.style.color = "red";
-        }
-
-    // Koniec gry
-       function endGame() {
-    questionElement.textContent = "Gra zakończona! Twoje punkty:";
-    scoreElement.textContent = `Zdobyłeś ${score} punktów`;
-    startButton.style.display = "";
-    inputElement.disabled = true;
-
-    saveRecord(score); // Zapisuje wynik (imię jest pobierane w saveRecord)
-}
-
-
-    // Obsługa wydarzeń
-        startButton.addEventListener("click", startGame);
-        inputElement.addEventListener("keyup", (event) => {
-          if (event.key === "Enter") {
-            checkAnswer();
-          }
-        });
-
-    function getPlayerName() {
-    let playerName = localStorage.getItem("playerName");
-    while (!playerName || playerName.length < 3) {
-        playerName = prompt("Wpisz swoje imię (minimum 3 znaki):");
-        if (playerName && playerName.length >= 3) {
-            localStorage.setItem("playerName", playerName);
-        } else {
-            alert("Imię musi mieć co najmniej 3 znaki!");
-        }
+    if (!askedQuestions[key]) { // Jeśli pytanie nie było jeszcze zadane
+      askedQuestions[key] = true; // Zapisanie jako użyte
+      questions.push({ a, b, answer: a * b });
     }
-    inputElement.click();
-    inputElement.focus();
-    return playerName;
+  }
 }
 
+// Rozpoczęcie gry
+function startGame() {
+  const playerName = getPlayerName(); // Sprawdza i pobiera imię gracza
+  console.log(`Gracz: ${playerName}`); // Opcjonalnie wyświetl w konsoli
 
+  generateQuestions();
+  currentQuestion = 0;
+  score = 0;
+  added = 0; // Resetowanie wartości dodanych punktów
+  startButton.style.display = "none";
+  inputElement.disabled = false;
+  inputElement.value = "";
+  inputElement.click();
+  inputElement.focus();
+  updateStats();
+  showQuestion();
+}
+
+// Wyświetlenie pytania
+function showQuestion() {
+  const q = questions[currentQuestion];
+  if (q) {
+    questionElement.innerHTML = `Ile to <b>${q.a}</b> x <b>${q.b}</b>?`;
+    startTime = Date.now();
+    updateStats();
+  }
+}
+
+// Sprawdzanie odpowiedzi na bieżąco
+inputElement.addEventListener("keyup", () => {
+  const userAnswer = inputElement.value.trim(); // Pobranie wpisanej wartości
+  const q = questions[currentQuestion]; // Aktualne pytanie
+
+  if (!q || userAnswer === "") return; // Nie rób nic, jeśli brak pytania lub pusty input
+
+  // Tolerancja na częściowe wpisywanie odpowiedzi
+  if (userAnswer.length < q.answer.toString().length) {
+    return; // Nie oceniamy, dopóki liczba nie jest kompletna
+  }
+
+  // Sprawdzanie poprawności odpowiedzi
+  if (parseInt(userAnswer, 10) === q.answer) {
+    // Poprawna odpowiedź
+    added = calculatePoints(); // Oblicz punkty za poprawną odpowiedź
+    flashSuccess(); // Zielone tło
+    score += added; // Dodaj punkty do wyniku
+    currentQuestion++;
+    inputElement.value = ""; // Wyczyść pole
+    if (currentQuestion < totalQuestions) {
+      showQuestion(); // Pokaż kolejne pytanie
+    } else {
+      endGame(); // Koniec gry
+    }
+  } else {
+    // Błędna odpowiedź
+    added = Math.min(-20, calculatePoints() - onepoints); // Kara punktowa
+    flashError(); // Czerwone tło
+    score = Math.max(0, score + added); // Nie pozwól na ujemny wynik
+    inputElement.value = ""; // Wyczyść input po błędzie
+  }
+  updateStats(); // Aktualizacja statystyk
+});
+
+// Funkcja do dodawania efektu zielonego tła
+function flashSuccess() {
+  document.body.style.backgroundColor = "#46944455"; // Zielone tło
+  setTimeout(() => {
+    document.body.style.backgroundColor = ""; // Przywróć oryginalny kolor
+  }, 250);
+}
+
+// Funkcja do obliczania punktów (z uwzględnieniem czasu)
+function calculatePoints() {
+  const timeTaken = Date.now() - startTime; // Czas w milisekundach
+  return Math.max(0, Math.round(onepoints + 5 - parseInt(timeTaken * 0.01))); // Formuła punktacji
+}
+
+// Efekt błędnej odpowiedzi (czerwone tło)
+function flashError() {
+  document.body.style.backgroundColor = "red"; // Czerwone tło
+  setTimeout(() => {
+    document.body.style.backgroundColor = ""; // Przywróć oryginalny kolor
+  }, 250);
+}
+
+// Aktualizacja statystyk
+function updateStats() {
+  if (currentQuestion < totalQuestions) {
+    // Wyświetlanie numeru pytania
+    scoreElement.textContent = `Nr ${currentQuestion + 1}/${totalQuestions}`;
+  }
+
+  // Aktualizacja punktów w tabelce
+  currentScoreElement.textContent = score;
+  addedElement.textContent = added; // Aktualizacja pola added
+  addedElement.style.color = added >= 0 ? "green" : "red"; // Kolor w zależności od wartości
+}
+
+// Koniec gry
+function endGame() {
+  questionElement.textContent = "Gra zakończona! Twoje punkty:";
+  scoreElement.textContent = `Zdobyłeś ${score} punktów`;
+  startButton.style.display = "";
+  inputElement.disabled = true;
+
+  saveRecord(score); // Zapisuje wynik (imię jest pobierane w saveRecord)
+}
+
+// Pobranie imienia gracza
+function getPlayerName() {
+  let playerName = localStorage.getItem("playerName");
+  while (!playerName || playerName.length < 3) {
+    playerName = prompt("Wpisz swoje imię (minimum 3 znaki):");
+    if (playerName && playerName.length >= 3) {
+      localStorage.setItem("playerName", playerName);
+    } else {
+      alert("Imię musi mieć co najmniej 3 znaki!");
+    }
+  }
+  inputElement.click();
+  inputElement.focus();
+  return playerName;
+}
+
+// Zapisanie wyniku
 function saveRecord(score) {
-    const url = "https://script.google.com/macros/s/AKfycbzCga2f6sHbwMYNAsVFOGSddqSdFsO_ua6WI5S10jWW2D7DB3aZUEAVTOyxUicwqTB-3w/exec";
-    const playerName = localStorage.getItem("playerName") || "Anonim";
+  const url = "https://script.google.com/macros/s/AKfycbzCga2f6sHbwMYNAsVFOGSddqSdFsO_ua6WI5S10jWW2D7DB3aZUEAVTOyxUicwqTB-3w/exec";
+  const playerName = localStorage.getItem("playerName") || "Anonim";
 
-    const data = { name: playerName, score: score };
+  const data = { name: playerName, score: score };
 
-    fetch(url, {
-        method: "POST",
-        body: JSON.stringify(data),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        mode: "no-cors" // Dodanie trybu no-cors
-    })
-    .then(response => console.log("Wysłano dane"))
-    .catch(error => console.error("Błąd:", error));
+  fetch(url, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    },
+    mode: "no-cors" // Dodanie trybu no-cors
+  })
+  .then(response => console.log("Wysłano dane"))
+  .catch(error => console.error("Błąd:", error));
 }
 
-
+// Obsługa wydarzeń
+startButton.addEventListener("click", startGame);
 
 
       </script>
