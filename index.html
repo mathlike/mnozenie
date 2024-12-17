@@ -275,6 +275,12 @@ function saveRecord(score) {
 
 // Obsługa wydarzeń
 startButton.addEventListener("click", startGame);
+// Uruchomienie gry klawiszem Enter, gdy przycisk Start jest aktywny
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && startButton.style.display !== "none") {
+    startButton.click(); // Wywołuje zdarzenie kliknięcia przycisku Start
+  }
+});
 
 
       </script>
