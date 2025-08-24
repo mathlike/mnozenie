@@ -168,3 +168,12 @@ let totalQuestions = 20,
   }
 
   startButton.addEventListener("click", startGame);
+
+document.addEventListener("keydown", (e) => {
+  if ((e.code === "Space" || e.code === "Enter") && !e.repeat) {
+    e.preventDefault();  
+    startButton.click();
+  }
+});
+
+
