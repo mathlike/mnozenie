@@ -1,55 +1,64 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Tabliczka mnożenia</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Tabliczka mnożenia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<audio id="bgMusic" src="bg_loop.m4a" loop></audio>
-  <div class="top-controls">
-    <label class="switch">
-      <input id="soundToggle" type="checkbox" checked="checked">
-      <span>Dźwięk</span>
-    </label>
-  </div>
-  <h1>Tabliczka mnożenia</h1>
-  <div id="stats">
-    <table>
-      <tbody>
-        <tr>
-          <td><b>Punkty</b></td>
-          <td id="currentScore">-</td>
-        </tr>
-        <tr>
-          <td>Dodane</td>
-          <td id="added">-</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div id="gameArea">
-    <div class="question-wrap">
-      <div id="question">Kliknij „Start”, aby rozpocząć!</div>
+    <audio id="bgMusic" src="bg_loop.m4a" loop></audio>
+    <div class="top-controls">
+        <label class="switch">
+            <input id="soundToggle" type="checkbox" checked="checked">
+            <span>Dźwięk</span>
+        </label>
     </div>
-    <br>
-    <input id="input" type="number" disabled="disabled">
-    <br>
-    <button id="startButton">Start</button>
-    <div class="progress-wrap">
-      <div id="progressBar">
-        <div id="progressFill"></div>
-      </div>
-      <div id="score"></div>
+    <h1>Tabliczka mnożenia</h1>
+    <div id="stats">
+        <table>
+            <tbody>
+                <tr>
+                    <td><b>Punkty</b></td>
+                    <td id="currentScore">-</td>
+                </tr>
+                <tr>
+                    <td>Dodane</td>
+                    <td id="added">-</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="decayBar">
+                            <div id="decayFill"></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
-  </div>
-  <div class="fixed-footer">
-    <em>&copy; 2014 Copyright by Sylwester (v1.18)</em>
-  </div>
+    <div id="gameArea">
+        <div class="question-wrap">
+            <div id="question">
+                Kliknij „Start”, aby rozpocząć!
+            </div>
+        </div>
+        <br>
+        <input id="input" type="number" disabled="disabled">
+        <br>
+        <button id="startButton">Start</button>
+        <div class="progress-wrap">
+            <div id="progressBar">
+                <div id="progressFill"></div>
+            </div>
+            <div id="score"></div>
+        </div>
+    </div>
+    <div class="fixed-footer">
+        <em>&copy; 2014 Copyright by Sylwester (v1.18)</em>
+    </div>
 </body>
 <script src="script.js"></script>
 </html>

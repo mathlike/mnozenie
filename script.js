@@ -17,6 +17,10 @@ let totalQuestions = 20,
     progressFill = document.getElementById("progressFill"),
     soundToggle = document.getElementById("soundToggle");
     let audioCtx = null;
+    const decayFill = document.getElementById("decayFill");
+    if (decayFill) decayFill.style.width = "0%";
+  
+    let decayRAF = null;
 
     function ensureAudio() {
       if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)()
@@ -82,6 +86,7 @@ let totalQuestions = 20,
     if (q) {
       questionElement.innerHTML = `<span class="dim">Ile to</span><b>${q.a}</b> x <b>${q.b}</b>?`;
       startTime = Date.now();
+      startDecayBar();
       updateStats();
     }
   }
@@ -132,6 +137,8 @@ let totalQuestions = 20,
     saveRecord(score);
     music.pause();
     music.currentTime = 0;
+    stopDecayBar();
+    if (decayFill) decayFill.style.width = "0%";
   }
 
   function getPlayerName() {
@@ -175,5 +182,27 @@ document.addEventListener("keydown", (e) => {
     startButton.click();
   }
 });
+
+function stopDecayBar() {
+  if (decayRAF) {
+    cancelAnimationFrame(decayRAF);
+    decayRAF = null;
+  }
+}
+
+function startDecayBar() {
+  stopDecayBar();
+  if (decayFill) decayFill.style.width = "100%";
+  const tick = () => {
+    const elapsed = Date.now() - startTime;
+    const total = (onepoints + 5) * 100;
+    const left = Math.max(0, 1 - (elapsed / total));
+    if (decayFill) decayFill.style.width = (left * 100) + "%";
+    if (currentQuestion < totalQuestions && left > 0) {
+      decayRAF = requestAnimationFrame(tick);
+    }
+  };
+  decayRAF = requestAnimationFrame(tick);
+}
 
 
