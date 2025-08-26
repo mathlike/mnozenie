@@ -8,6 +8,7 @@ let totalQuestions = 20,
     onepoints = 100;
     const music = document.getElementById("bgMusic");
     music.volume = 0.02;
+    eimie = document.getElementById("imie");
     const questionElement = document.getElementById("question"),
     inputElement = document.getElementById("input"),
     startButton = document.getElementById("startButton"),
@@ -19,6 +20,8 @@ let totalQuestions = 20,
     let audioCtx = null;
     const decayFill = document.getElementById("decayFill");
     if (decayFill) decayFill.style.width = "0%";
+    let pimie = localStorage.getItem("playerName");
+    if (pimie) eimie.textContent = pimie;
   
     let decayRAF = null;
 
@@ -151,6 +154,7 @@ let totalQuestions = 20,
         alert("Imię musi mieć co najmniej 3 znaki!");
       }
     }
+    eimie.textContent = playerName;
     inputElement.focus();
     return playerName;
   }
