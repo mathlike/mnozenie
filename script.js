@@ -179,6 +179,7 @@ let totalQuestions = 20,
   }
 
   startButton.addEventListener("click", startGame);
+  eimie.addEventListener("click", resetPlayer);
 
 document.addEventListener("keydown", (e) => {
   if ((e.code === "Space" || e.code === "Enter") && !e.repeat) {
@@ -207,6 +208,11 @@ function startDecayBar() {
     }
   };
   decayRAF = requestAnimationFrame(tick);
+}
+
+function resetPlayer() {
+    localStorage.playerName = "";
+    getPlayerName();
 }
 
 
