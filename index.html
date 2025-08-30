@@ -8,8 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-</head>
+    </head>
 <body>
+    <button style="float:left;" id="top10">TOP10</button>
     <audio id="bgMusic" src="bg_loop.m4a" loop></audio>
     <div class="top-controls">
         <label class="switch">
@@ -49,7 +50,7 @@
             </div>
         </div>
         <br>
-        <input id="input" type="number" disabled="disabled">
+        <input id="input" type="number">
         <br>
         <button id="startButton">Start</button>
         <div class="progress-wrap">
@@ -62,6 +63,23 @@
     <div class="fixed-footer">
         <em>&copy; 2014 Copyright by Sylwester (v1.18)</em>
     </div>
+<div id="top10Overlay" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-head">
+      <h2>TOP 10</h2>
+      <button id="top10Close" class="close-btn" aria-label="Zamknij">×</button>
+    </div>
+    <div id="top10Body" class="modal-body">
+      <div class="loading">Ładowanie…</div>
+      <table class="top10-table" aria-live="polite">
+        <thead><tr><th>#</th><th>Gracz</th><th>Rekord</th></tr></thead>
+        <tbody id="top10Rows"></tbody>
+      </table>
+      <div id="top10Error" class="error hidden"></div>
+      <div id="top10Meta" class="meta hidden"></div>
+    </div>
+  </div>
+</div>
 </body>
 <script src="script.js"></script>
 </html>

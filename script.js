@@ -1,4 +1,4 @@
-let totalQuestions = 20,
+let totalQuestions = 2,
     questions = [],
     askedQuestions = {},
     currentQuestion = 0,
@@ -24,6 +24,7 @@ let totalQuestions = 20,
     if (pimie) eimie.textContent = pimie;
   
     let decayRAF = null;
+    inputElement.style.display = "none";
 
     function ensureAudio() {
       if (!audioCtx) audioCtx = new(window.AudioContext || window.webkitAudioContext)()
@@ -77,7 +78,7 @@ let totalQuestions = 20,
     score = 0;
     added = 0;
     startButton.style.display = "none";
-    inputElement.disabled = false;
+    inputElement.style.display = "";
     inputElement.value = "";
     inputElement.focus();
     updateStats();
@@ -136,7 +137,7 @@ let totalQuestions = 20,
   function endGame() {
     questionElement.innerHTML = '<span class="dim">Gra zakończona! Twoje punkty: </span>' + score;
     startButton.style.display = "";
-    inputElement.disabled = true;
+    inputElement.style.display = "none";
     saveRecord(score);
     music.pause();
     music.currentTime = 0;
@@ -218,6 +219,110 @@ function startDecayBar() {
 function resetPlayer() {
     localStorage.playerName = "";
     getPlayerName();
+}
+
+// === TOP10 ===
+const TOP10_URL = 'https://script.google.com/macros/s/AKfycbzCga2f6sHbwMYNAsVFOGSddqSdFsO_ua6WI5S10jWW2D7DB3aZUEAVTOyxUicwqTB-3w/exec?high=1';
+const overlay = document.getElementById('top10Overlay');
+const closeBtn = document.getElementById('top10Close');
+const rowsEl = document.getElementById('top10Rows');
+const bodyEl = document.getElementById('top10Body');
+const errEl = document.getElementById('top10Error');
+const metaEl = document.getElementById('top10Meta');
+
+document.getElementById('top10').addEventListener('click', showTop10);
+closeBtn.addEventListener('click', closeTop10);
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeTop10(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && !overlay.classList.contains('hidden')) closeTop10(); });
+
+async function showTop10() {
+  overlay.classList.remove('hidden');
+  rowsEl.innerHTML = '';
+  errEl.classList.add('hidden'); errEl.textContent = '';
+  metaEl.classList.add('hidden'); metaEl.textContent = '';
+  bodyEl.querySelector('.loading')?.classList.remove('hidden');
+
+  // cache 60s
+  const now = Date.now();
+  try {
+    const cache = JSON.parse(localStorage.getItem('top10Cache') || 'null');
+    if (cache && now - cache.ts < 60000) {
+      renderTop10(cache.data, cache.ts, true);
+    } else {
+      const data = await fetchTop10();
+      localStorage.setItem('top10Cache', JSON.stringify({ data, ts: now }));
+      renderTop10(data, now, false);
+    }
+  } catch (e) {
+    bodyEl.querySelector('.loading')?.classList.add('hidden');
+    errEl.textContent = 'Nie udało się pobrać listy TOP10.';
+    errEl.classList.remove('hidden');
+    // Pokaż z cache, jeśli mamy
+    try {
+      const cache = JSON.parse(localStorage.getItem('top10Cache') || 'null');
+      if (cache?.data) {
+        renderTop10(cache.data, cache.ts, true);
+      }
+    } catch {}
+  }
+}
+
+function closeTop10(){ overlay.classList.add('hidden'); }
+
+async function fetchTop10() {
+  const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(TOP10_URL) + '&disableCache=true';
+  const res = await fetch(url);
+  const raw = await res.text();
+
+  // jeśli serwer zwróci JSON jako tekst – parsujemy
+  let arr;
+  try { arr = JSON.parse(raw); }
+  catch { throw new Error('Bad JSON'); }
+
+  // normalizacja: oczekujemy [{colA, colB}, ...]
+  if (!Array.isArray(arr)) throw new Error('Unexpected format');
+
+  // odfiltruj nagłówek, jeśli pierwszy wiersz nim jest
+  if (arr.length && (String(arr[0].colA).toUpperCase() === 'GRACZ' || String(arr[0].colB).toUpperCase() === 'REKORD')) {
+    arr = arr.slice(1);
+  }
+
+  // posortuj malejąco po colB (gdyby backend nie posortował)
+  arr.sort((a,b) => Number(b.colB) - Number(a.colB));
+
+  // weź top10
+  return arr.slice(0,10);
+}
+
+function renderTop10(data, ts, fromCache){
+  bodyEl.querySelector('.loading')?.classList.add('hidden');
+  rowsEl.innerHTML = '';
+
+  data.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    const rank = i+1;
+    const badge = document.createElement('span');
+    badge.className = 'badge ' + (rank===1?'gold':rank===2?'silver':rank===3?'bronze':'');
+    badge.textContent = rank;
+
+    const tdRank = document.createElement('td');
+    tdRank.appendChild(badge);
+
+    const tdName = document.createElement('td');
+    tdName.textContent = String(row.colA ?? '');
+
+    const tdScore = document.createElement('td');
+    tdScore.textContent = String(row.colB ?? '');
+
+    tr.appendChild(tdRank);
+    tr.appendChild(tdName);
+    tr.appendChild(tdScore);
+    rowsEl.appendChild(tr);
+  });
+
+  const when = new Date(ts).toLocaleString('pl-PL');
+  metaEl.textContent = (fromCache ? 'Z cache • ' : '') + 'Ostatnie odświeżenie: ' + when;
+  metaEl.classList.remove('hidden');
 }
 
 
