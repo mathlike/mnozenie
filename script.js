@@ -145,19 +145,24 @@ let totalQuestions = 20,
   }
 
   function getPlayerName() {
-    let playerName = localStorage.getItem("playerName");
-    while (!playerName || playerName.length < 3) {
-      playerName = prompt("Wpisz swoje imię (minimum 3 znaki):");
-      if (playerName && playerName.length >= 3) {
+  let playerName = localStorage.getItem("playerName");
+  while (!playerName || playerName.length < 3 || playerName.length > 15) {
+    playerName = prompt("Wpisz swoje imię (od 3 do 15 znaków):");
+    if (playerName) {
+      if (playerName.length >= 3 && playerName.length <= 15) {
         localStorage.setItem("playerName", playerName);
-      } else {
+      } else if (playerName.length < 3) {
         alert("Imię musi mieć co najmniej 3 znaki!");
+      } else if (playerName.length > 15) {
+        alert("Imię może mieć maksymalnie 15 znaków!");
       }
     }
-    eimie.textContent = playerName;
-    inputElement.focus();
-    return playerName;
   }
+
+  eimie.textContent = playerName;
+  inputElement.focus();
+  return playerName;
+}
 
       // Zapisanie wyniku
   function saveRecord(score) {
