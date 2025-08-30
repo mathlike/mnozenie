@@ -1,4 +1,4 @@
-let totalQuestions = 2,
+let totalQuestions = 20,
     questions = [],
     askedQuestions = {},
     currentQuestion = 0,
