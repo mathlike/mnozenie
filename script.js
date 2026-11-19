@@ -270,7 +270,8 @@ async function showTop10() {
 function closeTop10(){ overlay.classList.add('hidden'); }
 
 async function fetchTop10() {
-  const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(TOP10_URL) + '&disableCache=true';
+  //const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(TOP10_URL) + '&disableCache=true';
+  const url = TOP10_URL;
   const res = await fetch(url);
   const raw = await res.text();
 
